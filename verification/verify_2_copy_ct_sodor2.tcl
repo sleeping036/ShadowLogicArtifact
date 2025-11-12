@@ -1,4 +1,5 @@
 analyze -sva src/sodor2/sodor_2_stage.sv src/sodor2/two_copy_top_ct.sv src/sodor2/param.vh
+analyze -sva verification/extra/cov_n_cycles_bind.sv
 
 elaborate -top top -bbox_mul 256 -bbox_a 1024 -bbox_m plusarg_reader -bbox_m GenericDigitalInIOCell -bbox_m GenericDigitalOutIOCell -bbox_m ClockDividerN -bbox_m EICG_wrapper
 clock clk
@@ -36,6 +37,13 @@ set_prove_orchestration off
 set_engine_mode {AM}
 set_prove_time_limit 7d
 prove -all
+
+# 生成 N 拍 witness
+set_active_task cover
+cover -all
+
+# 可选：单独存一份 jdb 便于直接恢复到 cover 见证
+save -jdb my_jdb_cov_2copy_sodor2 -capture_setup -capture_session_data
 
 save -jdb my_jdb_ct_2copy_sodor2 -capture_setup -capture_session_data
 
