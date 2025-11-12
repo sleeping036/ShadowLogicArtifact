@@ -39,7 +39,6 @@ set_prove_time_limit 7d
 prove -all
 
 # 生成 N 拍 witness
-set_active_task cover
 cover -all
 
 # 可选：单独存一份 jdb 便于直接恢复到 cover 见证
