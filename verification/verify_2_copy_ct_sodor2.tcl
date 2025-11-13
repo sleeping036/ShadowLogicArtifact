@@ -38,9 +38,6 @@ set_engine_mode {AM}
 set_prove_time_limit 7d
 prove -all
 
-# 生成 N 拍 witness
-cover -all
-
 # 可选：单独存一份 jdb 便于直接恢复到 cover 见证
 save -jdb my_jdb_cov_2copy_sodor2 -capture_setup -capture_session_data
 
