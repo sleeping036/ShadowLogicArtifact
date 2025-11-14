@@ -11,6 +11,9 @@ module top(
 reg stall_1, stall_2, finish_1, finish_2, commit_deviation, addr_deviation, invalid_program;
 // reg C_mem_valid_r, C_mem_rdwt_r, C_is_br_r, C_taken_r;
 // reg [`MEMD_SIZE_LOG-1:0] C_mem_addr_r;
+reg [31:0] total_cycle_cnt;   // 统计复位后总拍数
+reg [31:0] stall_cycle_cnt;   // 统计有 stall（对齐暂停）的拍数
+
 
 
 SodorInternalTile copy1(.clock(stall_1? 0: clk), 
@@ -66,6 +69,9 @@ always @(posedge clk) begin
         commit_deviation <= 0;
         addr_deviation <= 0;
         invalid_program <= 0;
+
+        total_cycle_cnt <= 0;
+        stall_cycle_cnt <= 0;
     end  
     else begin
         if (!stall_1 && !stall_2 && copy1.core.d.exe_reg_valid && copy2.core.d.exe_reg_valid) begin
@@ -119,6 +125,14 @@ always @(posedge clk) begin
             finish_1 <= 1;
         if ((commit_deviation || addr_deviation) && (copy2.core.d.exe_reg_valid))
             finish_2 <= 1;
+
+        // ---- 计数器逻辑放在最后 ----
+        total_cycle_cnt <= total_cycle_cnt + 1;
+
+        if (stall_1 || stall_2)
+            stall_cycle_cnt <= stall_cycle_cnt + 1;
+        // ----------------------------
+
     end
         
 
